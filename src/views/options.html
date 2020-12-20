@@ -1,0 +1,53 @@
+<!doctype html>
+<html style="min-height:auto">
+
+<head>
+    <title>URL redirect</title>
+    <link rel="stylesheet" type="text/css" href="../lib/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/options.css" />
+    <script src="../lib/jquery-3.1.1.min.js"></script>
+    <script src="../lib/semantic.min.js"></script>
+    <script src="../lib/semantic-ui-vue.js"></script>
+    <script src="../lib/vue.js"></script>
+    <script src="../js/options.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="ui grid container" style="margin-top: 3rem">
+            <h2 class="ui header">Add New Link</h2>
+            <div class="row ui input">
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="row">
+                <div id="add-new-link-inputs">
+                    <!-- <div class="ui fluid search selection dropdown">
+                        <input type="hidden" name="group">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Select Group</div>
+                        <div class="menu">
+                            <div class="item" v-for="g in groups" :key="g.name" :value="g.name" @change="onGroupChange($event)">
+                                {{g.name}}
+                            </div>
+                        </div>
+                    </div> -->
+                    <sui-dropdown fluid :options="groups" placeholder="Select Country" search selection
+                        v-model="selectedGroup" />
+                    <div class="ui input">
+                        <input id="subgroup" type="text" placeholder="Group (optional)" />
+                    </div>
+                    <div class="ui input">
+                        <input id="keyword2" type="text" placeholder="Keyword (required)" />
+                    </div>
+                </div>
+                <div style="margin-left:auto">
+                    <button class="ui primary button float-right">Save Shortcut</button>
+                </div>
+            </div>
+            <button class="ui secondary button">Create New Group</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

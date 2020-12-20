@@ -18,6 +18,7 @@
     "omnibox":{
         "keyword":"go"
     },
+    "options_page": "src/views/options.html",
     "content_security_policy":
         "script-src 'self' 'unsafe-eval'; object-src 'self'; img-src * data: 'self' 'unsafe-eval'",
     "offline_enabled": true,
