@@ -1,75 +1,113 @@
-# chrome-extension-template
+# React Chrome Extension Boilerplate
 
-## Introduction
+[![Build Status](https://travis-ci.org/jhen0409/react-chrome-extension-boilerplate.svg?branch=master)](https://travis-ci.org/jhen0409/react-chrome-extension-boilerplate)
+[![Build status: Windows](https://ci.appveyor.com/api/projects/status/b5xy6ev6oykth0d2/branch/master?svg=true)](https://ci.appveyor.com/project/jhen0409/react-chrome-extension-boilerplate/branch/master)
+[![NPM version](http://img.shields.io/npm/v/react-chrome-extension-boilerplate.svg?style=flat)](https://www.npmjs.com/package/react-chrome-extension-boilerplate)
+[![Dependency Status](https://david-dm.org/jhen0409/react-chrome-extension-boilerplate.svg)](https://david-dm.org/jhen0409/react-chrome-extension-boilerplate)
+[![devDependency Status](https://david-dm.org/jhen0409/react-chrome-extension-boilerplate/dev-status.svg)](https://david-dm.org/jhen0409/react-chrome-extension-boilerplate#info=devDependencies)
 
-This project aims to provide an easy to use boilerplate for chrome extensions, showcasing communication between its different scripts.
+> Boilerplate for Chrome Extension React.js project.
 
-Not all extensions will need of all scripts or all types of messaging. All code snippets are optional. Text and images should be replaced with your own.
+## Features
+
+ - Simple [React](https://github.com/facebook/react)/[Redux](https://github.com/rackt/redux) examples of Chrome Extension Window & Popup & Inject pages
+ - Hot reloading React/Redux (Using [Webpack](https://github.com/webpack/webpack) and [React Transform](https://github.com/gaearon/react-transform))
+ - Write code with ES2015+ syntax (Using [Babel](https://github.com/babel/babel))
+ - E2E tests of Window & Popup & Inject pages (Using [Chrome Driver](https://www.npmjs.com/package/chromedriver), [Selenium Webdriver](https://www.npmjs.com/package/selenium-webdriver))
+
+## Examples
+
+The example is edited from [Redux](https://github.com/rackt/redux) TodoMVC example.
+
+#### Popup
+
+![Popup](https://cloud.githubusercontent.com/assets/3001525/14128490/dc05e9f8-f653-11e5-9de6-82d1de01844a.gif)
+
+The `todos` state will be saved to `chrome.storage.local`.
+
+#### Window
+
+![Window](https://cloud.githubusercontent.com/assets/3001525/14128489/da176b62-f653-11e5-9bff-fefc35232358.gif)
+
+The context menu is created by [chrome/extension/background/contextMenus.js](chrome/extension/background/contextMenus.js).
+
+#### Inject page
+
+The inject script is being run by [chrome/extension/background/inject.js](chrome/extension/background/inject.js). A simple example will be inject bottom of page(`https://github.com/*`) if you visit.
+
+If you are receiving the error message `Failed to load resource: net::ERR_INSECURE_RESPONSE`, you need to allow invalid certificates for resources loaded from localhost. You can do this by visiting the following URL: `chrome://flags/#allow-insecure-localhost` and enabling **Allow invalid certificates for resources loaded from localhost**.
 
 ## Installation
 
-Clone the repo:
+```bash
+# clone it
+$ git clone https://github.com/jhen0409/react-chrome-extension-boilerplate.git
 
-```
-git clone git@github.com:edrpls/chrome-extension-template.git name-of-your-project
-```
-
-Set git to track your own repository instead of this one:
-
-```
-git remote set-url --delete origin git@github.com:edrpls/chrome-extension-template.git # Remove old origin
-git remote set-url --add origin [YOUR REPO URL] # Add new origin
+# Install dependencies
+$ npm install
 ```
 
-Install dependencies:
+## Development
 
+* Run script
+```bash
+# build files to './dev'
+# start webpack development server
+$ npm run dev
 ```
-yarn install # or npm install
+* If you're developing Inject page, please allow `https://localhost:3000` connections. (Because `injectpage` injected GitHub (https) pages, so webpack server procotol must be https.)
+* [Load unpacked extensions](https://developer.chrome.com/extensions/getstarted#unpacked) with `./dev` folder.
+
+#### React/Redux hot reload
+
+This boilerplate uses `Webpack` and `react-transform`, and use `Redux`. You can hot reload by editing related files of Popup & Window & Inject page.
+
+#### Using Redux DevTools Extension
+
+You can use [redux-devtools-extension](https://github.com/zalmoxisus/redux-devtools-extension) on development mode.
+
+## Build
+
+```bash
+# build files to './build'
+$ npm run build
 ```
 
-## Usage
+## Compress
 
-To run a development server that will watch for file changes and rebuild the scripts, run:
-
-```
-yarn start
-```
-
-To just build the files without the development server:
-
-```
-yarn build
+```bash
+# compress build folder to {manifest.name}.zip and crx
+$ npm run build
+$ npm run compress -- [options]
 ```
 
-Both commands will create a `dist/` directory, it will contain the built files that should be loaded into the browser or packed.
+#### Options
 
-## Load into Chrome
+If you want to build `crx` file (auto update), please provide options, and add `update.xml` file url in [manifest.json](https://developer.chrome.com/extensions/autoupdate#update_url manifest.json).
 
-To load the built files into Chrome, open [chrome://extensions/](chrome://extensions/).
+* --app-id: your extension id (can be get it when you first release extension)
+* --key: your private key path (default: './key.pem')  
+  you can use `npm run compress-keygen` to generate private key `./key.pem`
+* --codebase: your `crx` file url
 
-Enable "Developer mode" if it's not enabled yet:
+See [autoupdate guide](https://developer.chrome.com/extensions/autoupdate) for more information.
 
-![Developer Mode Checkbox](assets/dev_mode.png)
+## Test
 
-Click on "Load unpacked":
+* `test/app`: React components, Redux actions & reducers tests
+* `test/e2e`: E2E tests (use [chromedriver](https://www.npmjs.com/package/chromedriver), [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver))
 
-![Load Unpacked Button](assets/load_unpacked.png)
+```bash
+# lint
+$ npm run lint
+# test/app
+$ npm test
+$ npm test -- --watch  # watch files
+# test/e2e
+$ npm run build
+$ npm run test-e2e
+```
 
-Find the `dist/` directory on your system and open it.
+## LICENSE
 
-The extension should be now at the top of the page:
-
-![Extension Loaded](assets/ext_loaded.png)
-
-## Publishing
-
-[Follow the official docs](https://developer.chrome.com/webstore/publish) to learn how to publish a Chrome extension.
-Please note that Google has its own process to review public extensions and using this boilerplate **does not guarantee** that the extension will pass it. Passing the review process is your responsibility!
-
-## External resources
-
-*   [Sample extension built with this template](https://github.com/edrpls/social-network-alert)
-
-*   [Chrome Developer Documentation](https://developer.chrome.com/extensions/devguide)
-
-*   [Overview slides about Chrome Extensions](https://github.com/edrpls/chrome-extensions-what-why-how)
+[MIT](LICENSE)
