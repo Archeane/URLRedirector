@@ -1,24 +1,46 @@
-/* background.js
- *
- * This file has an example of how to make variables accessible to other scripts of the extension.
- *
- * It also shows how to handle short lived messages from other scripts, in this case, from in-content.js
- *
- * Note that not all extensions need of a background.js file, but extensions that need to persist data after a popup has closed may need of it.
- */
 
-// A sample object that will be exposed further down and used on popup.js
-const sampleBackgroundGlobal = {
-    message: 'This object comes from background.js'
+const encodeHTML = function (str) {
+    return str.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
 };
 
-// Listen to short lived messages from in-content.js
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    // Perform any ther actions depending on the message
-    console.log('background.js - received message from in-content.js:', message);
-    // Respond message
-    sendResponse('👍');
+// suggest results from the existing shortcuts
+chrome.omnibox.onInputChanged.addListener(function (text, suggest) {
+    chrome.storage.sync.get(["shortcuts"], function (result) {
+        const shortcuts = result.shortcuts || [];
+        const regex = new RegExp(text, "i");
+        let matches = shortcuts.filter(obj => regex.test(obj.keyword));
+        if (matches && matches.length > 0) {
+            matches = matches.slice(0, 5);
+
+            const out = [];
+
+            matches.forEach(function (res) {
+                out.push({
+                    content: res.keyword,
+                    description: `${res.keyword} - ${encodeHTML(res.url)}`
+                });
+            });
+            suggest(out);
+        } else {
+            suggest([]);
+        }
+    });
 });
 
-// Make variables accessible from chrome.extension.getBackgroundPage()
-window.sampleBackgroundGlobal = sampleBackgroundGlobal;
+// This event is fired with the user accepts the input in the omnibox.
+chrome.omnibox.onInputEntered.addListener(function (text) {
+    if (text && text.trim()) {
+        chrome.storage.sync.get(["shortcuts"], function (result) {
+            const shortcuts = result.shortcuts || [];
+            const shortcut = shortcuts.find(obj => obj.keyword === text.trim());
+            if (shortcut) {
+                const newURL = shortcut.url;
+                chrome.tabs.update(null, { url: newURL });
+            }
+        });
+    }
+});
